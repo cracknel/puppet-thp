@@ -8,17 +8,10 @@ on:
   schedule:
     - cron: '15 23 * * 4'
 
-permissions:
-  contents: read
-
 jobs:
   puppet-lint:
     name: Run puppet-lint scanning
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      security-events: write
-      actions: read
 
     steps:
       - name: Checkout code
@@ -30,17 +23,7 @@ jobs:
           ruby-version: '2.7'
 
       - name: Install puppet-lint
-        run: |
-          gem install puppet-lint
-          gem install puppet-lint-sarif
+        run: gem install puppet-lint
 
       - name: Run puppet-lint
-        run: |
-          puppet-lint --with-filename manifests/ || true
-          puppet-lint --with-filename --sarif > puppet-lint-results.sarif || true
-
-      - name: Upload analysis results to GitHub
-        uses: github/codeql-action/upload-sarif@v3
-        with:
-          sarif_file: puppet-lint-results.sarif
-          wait-for-processing: true
+        run: puppet-lint --with-filename manifests/
